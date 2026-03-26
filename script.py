@@ -1,71 +1,82 @@
-tList = []
+# Task Manager Application
 
-def displayMenu():
-    print( "\n--- Task Manager Menu ---" )
-    print("1. View tasks");print("2. Add a task")
-    print("3. Mark task as complete"); print("4. Delete a task")
-    print( "5. Exit" )
+def display_menu():
+    print("\n--- Task Manager Menu ---")
+    print("1. View tasks")
+    print("2. Add a task")
+    print("3. Mark task as complete")
+    print("4. Delete a task")
+    print("5. Exit")
 
-def vwTsk():
-  if len(tList) == 0:
-        print("\nNo tasks found.")
+def view_tasks(tasks):
+    if not tasks:
+        print("\nNo tasks found. You are all caught up!")
         return
-  print("\n--- Your Tasks ---")
-  i = 0
-  while i < len(tList):
-     if tList[i]['c'] == True:
-        s = "[X]"
-     else:
-         s = "[ ]"
-     print(str(i + 1) + ". " + s + " " + tList[i]['n'])
-     i = i + 1
+    
+    print("\n--- Your Tasks ---")
+    for index, task in enumerate(tasks):
+        status = "[X]" if task['completed'] else "[ ]"
+        print(f"{index + 1}. {status} {task['name']}")
 
-def add_tsk():
-   name = input("\nEnter the new task: ")
-   if name == "":
-      print("Task name cannot be empty.")
-   else:
-      tList.append({"n": name, "c": False})
-      print("Task added.")
+def add_task(tasks):
+    task_name = input("\nEnter the new task: ").strip()
+    if task_name:
+        tasks.append({"name": task_name, "completed": False})
+        print(f"Task '{task_name}' added successfully.")
+    else:
+        print("Task name cannot be empty.")
 
-def MkCmp():
-    vwTsk()
-    if len(tList) > 0:
-        try:
-           num = input("\nEnter task number: ")
-           num = int(num)
-           if num >= 1 and num <= len(tList):
-              tList[num - 1]['c'] = True
-              print("Task marked as complete.")
-           else:
-              print("Invalid task number.")
-        except:
-           print("Please enter a valid number.")
+def complete_task(tasks):
+    view_tasks(tasks)
+    if not tasks:
+        return
+    
+    try:
+        task_num = int(input("\nEnter task number to mark complete: "))
+        if 1 <= task_num <= len(tasks):
+            tasks[task_num - 1]['completed'] = True
+            print("Task marked as complete.")
+        else:
+            print("Invalid task number.")
+    except ValueError:
+        print("Please enter a valid number.")
 
-def del_t():
-  vwTsk()
-  if len(tList) > 0:
-     try:
-        x = int(input("\nEnter task number to delete: "))
-        if x >= 1 and x <= len(tList):
-           print("Task '" + tList[x - 1]['n'] + "' deleted.")
-           tList.pop(x - 1)
-        else: print("Invalid task number.")
-     except: print("Please enter a valid number.")
+def delete_task(tasks):
+    view_tasks(tasks)
+    if not tasks:
+        return
+    
+    try:
+        task_num = int(input("\nEnter task number to delete: "))
+        if 1 <= task_num <= len(tasks):
+            removed = tasks.pop(task_num - 1)
+            print(f"Task '{removed['name']}' deleted.")
+        else:
+            print("Invalid task number.")
+    except ValueError:
+        print("Please enter a valid number.")
 
-def run():
- print("Welcome to the Task Manager!")
- while True:
-  displayMenu()
-  c = input("\nChoose an option (1-5): ")
-  if c == '1': vwTsk()
-  if c == '2': add_tsk()
-  if c == '3': MkCmp()
-  if c == '4': del_t()
-  if c == '5':
-     print("\nExiting Task Manager. Goodbye!")
-     break
-  if c not in ['1','2','3','4','5']:
-      print("\nInvalid choice.")
+def main():
+    tasks = []
+    print("Welcome to the Task Manager!")
+    
+    while True:
+        display_menu()
+        choice = input("\nChoose an option (1-5): ").strip()
+        
+        if choice == '1':
+            view_tasks(tasks)
+        elif choice == '2':
+            add_task(tasks)
+        elif choice == '3':
+            complete_task(tasks)
+        elif choice == '4':
+            delete_task(tasks)
+        elif choice == '5':
+            print("\nExiting Task Manager. Goodbye!")
+            break
+        else:
+            print("\nInvalid choice. Please pick a number from 1 to 5.")
 
-run()
+if __name__ == "__main__":
+    main()
